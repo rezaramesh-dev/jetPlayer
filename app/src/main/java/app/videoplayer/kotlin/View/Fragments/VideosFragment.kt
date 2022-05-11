@@ -2,9 +2,9 @@ package app.videoplayer.kotlin.View.Fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +15,11 @@ import app.videoplayer.kotlin.databinding.FragmentVideosBinding
 import java.lang.Exception
 
 class VideosFragment : Fragment() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -30,10 +35,27 @@ class VideosFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         try {
             binding.videoRV.adapter = VideoAdapter(requireContext(), MainActivity.videoList)
-        }catch (e:Exception){}
+        } catch (e: Exception) {
+        }
 
         binding.totalVideo.text = "Total Videos: ${MainActivity.folderList.size}"
 
         return view
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_view, menu)
+        val searchView = menu.findItem(R.id.search)?.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(p0: String?): Boolean = true
+
+            override fun onQueryTextSubmit(newText: String?): Boolean {
+                if (newText != null) {
+                    Toast.makeText(requireContext(), newText.toString(), Toast.LENGTH_SHORT).show()
+                }
+                return true
+            }
+        })
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

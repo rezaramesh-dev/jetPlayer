@@ -122,7 +122,7 @@ class PlayerActivity : AppCompatActivity() {
         else binding.repeatBtn.setImageResource(com.google.android.exoplayer2.ui.R.drawable.exo_controls_repeat_off)
     }
 
-    @SuppressLint("PrivateResource")
+    @SuppressLint("PrivateResource", "SetTextI18n")
     private fun initializeBinding() {
         val customDialog =
             LayoutInflater.from(this).inflate(R.layout.more_features, binding.root, false)
@@ -318,8 +318,7 @@ class PlayerActivity : AppCompatActivity() {
         val status = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             appOps.checkOpNoThrow(
                 AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
-                android.os.Process.myUid(),
-                packageName
+                android.os.Process.myUid(), packageName
             ) == AppOpsManager.MODE_ALLOWED
         } else false
 
