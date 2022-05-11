@@ -116,6 +116,11 @@ class PlayerActivity : AppCompatActivity() {
                 playerList = ArrayList()
                 playerList.addAll(FoldersActivity.currentFolderVideo)
             }
+            "SearchedVideos" -> {
+                playerList = ArrayList()
+                playerList.addAll(MainActivity.searchList)
+                createPlayer()
+            }
         }
 
         if (repeat) binding.repeatBtn.setImageResource(com.google.android.exoplayer2.ui.R.drawable.exo_controls_repeat_all)
@@ -455,7 +460,8 @@ class PlayerActivity : AppCompatActivity() {
             val intent = Intent(this, PlayerActivity::class.java)
             when (pipStatus) {
                 1 -> intent.putExtra("class", "FolderActivity")
-                2 -> intent.putExtra("class", "AllVideos")
+                2 -> intent.putExtra("class", "SearchedVideos")
+                3 -> intent.putExtra("class", "AllVideos")
             }
             startActivity(intent)
         }

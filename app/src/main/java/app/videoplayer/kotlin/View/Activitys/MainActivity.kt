@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var videoList: ArrayList<Video>
         lateinit var folderList: ArrayList<Folder>
+        lateinit var searchList: ArrayList<Video>
+        var search: Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         if (requestRuntimePermission()) {
             folderList = ArrayList()
-            CoroutineScope(IO).launch{
+            CoroutineScope(IO).launch {
                 videoList = getAllVideos()
                 setFragment(VideosFragment())
             }

@@ -1,5 +1,6 @@
 package app.videoplayer.kotlin.Adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.text.format.DateUtils
@@ -9,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.videoplayer.kotlin.Models.Video
 import app.videoplayer.kotlin.R
+import app.videoplayer.kotlin.View.Activitys.MainActivity
 import app.videoplayer.kotlin.View.Activitys.PlayerActivity
 import app.videoplayer.kotlin.databinding.VideoViewBinding
 import com.bumptech.glide.Glide
@@ -16,7 +18,7 @@ import com.bumptech.glide.request.RequestOptions
 
 class VideoAdapter(
     private val context: Context,
-    private val videoList: ArrayList<Video>,
+    private var videoList: ArrayList<Video>,
     private val isFolder: Boolean = false
 ) :
     RecyclerView.Adapter<VideoAdapter.MyHolder>() {
@@ -49,8 +51,12 @@ class VideoAdapter(
                     PlayerActivity.pipStatus = 1
                     sendIntent(position = position, ref = "FolderActivity")
                 }
-                else -> {
+                MainActivity.search -> {
                     PlayerActivity.pipStatus = 2
+                    sendIntent(position = position, ref = "SearchedVideos")
+                }
+                else -> {
+                    PlayerActivity.pipStatus = 3
                     sendIntent(position = position, ref = "AllVideos")
                 }
             }
@@ -66,6 +72,13 @@ class VideoAdapter(
         val intent = Intent(context, PlayerActivity::class.java)
         intent.putExtra("class", ref)
         ContextCompat.startActivity(context, intent, null)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(searchList: ArrayList<Video>) {
+        videoList = ArrayList()
+        videoList.addAll(searchList)
+        notifyDataSetChanged()
     }
 
 }

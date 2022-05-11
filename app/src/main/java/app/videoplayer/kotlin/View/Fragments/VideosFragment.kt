@@ -3,8 +3,7 @@ package app.videoplayer.kotlin.View.Fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
-import android.widget.SearchView
-import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +14,8 @@ import app.videoplayer.kotlin.databinding.FragmentVideosBinding
 import java.lang.Exception
 
 class VideosFragment : Fragment() {
+
+    private lateinit var adapter: VideoAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,8 @@ class VideosFragment : Fragment() {
         binding.videoRV.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         try {
-            binding.videoRV.adapter = VideoAdapter(requireContext(), MainActivity.videoList)
+            adapter = VideoAdapter(requireContext(), MainActivity.videoList)
+            binding.videoRV.adapter = adapter
         } catch (e: Exception) {
         }
 
@@ -51,7 +53,13 @@ class VideosFragment : Fragment() {
 
             override fun onQueryTextSubmit(newText: String?): Boolean {
                 if (newText != null) {
-                    Toast.makeText(requireContext(), newText.toString(), Toast.LENGTH_SHORT).show()
+                    MainActivity.searchList = ArrayList()
+                    for (video in MainActivity.videoList) {
+                        if (video.title.lowercase().contains(newText.lowercase()))
+                            MainActivity.searchList.add(video)
+                    }
+                    MainActivity.search = true
+                    adapter.updateList(searchList = MainActivity.searchList)
                 }
                 return true
             }
