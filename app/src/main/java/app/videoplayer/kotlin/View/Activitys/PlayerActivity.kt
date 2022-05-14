@@ -121,6 +121,15 @@ class PlayerActivity : AppCompatActivity() {
                 playerList.addAll(MainActivity.searchList)
                 createPlayer()
             }
+            "NowPlaying" -> {
+                speed = 1.0f
+                binding.videoTitle.text = playerList[position].title
+                binding.videoTitle.isSelected = true
+                binding.playerView.player = player
+                playVideo()
+                playInFullScreen(enable = isFullscreen)
+                setVisibility()
+            }
         }
 
         if (repeat) binding.repeatBtn.setImageResource(com.google.android.exoplayer2.ui.R.drawable.exo_controls_repeat_all)
@@ -469,6 +478,6 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        player.release()
+        player.pause()
     }
 }
