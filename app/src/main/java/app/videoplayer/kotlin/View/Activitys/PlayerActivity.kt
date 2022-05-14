@@ -59,6 +59,7 @@ class PlayerActivity : AppCompatActivity() {
         private var speed: Float = 1.0f
         var pipStatus: Int = 0
         lateinit var dialog: Dialog
+        var nowPlayingId: String = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -385,6 +386,7 @@ class PlayerActivity : AppCompatActivity() {
         })
         playInFullScreen(enable = isFullscreen)
         setVisibility()
+        nowPlayingId = playerList[position].id
     }
 
     private fun playVideo() {
