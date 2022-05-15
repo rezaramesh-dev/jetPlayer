@@ -152,6 +152,19 @@ class VideoAdapter(
                 bindingRF.renameField.text =
                     SpannableStringBuilder.valueOf(videoList[position].title)
             }
+
+            bindingMF.shareBtn.setOnClickListener {
+                dialog.dismiss()
+                val shareIntent = Intent()
+                shareIntent.action = Intent.ACTION_SEND
+                shareIntent.type = "video/*"
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(videoList[position].path))
+                ContextCompat.startActivity(
+                    context,
+                    Intent.createChooser(shareIntent, "Share Video File"),
+                    null
+                )
+            }
             return@setOnLongClickListener true
         }
     }
