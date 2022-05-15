@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         lateinit var folderList: ArrayList<Folder>
         lateinit var searchList: ArrayList<Video>
         var search: Boolean = false
+        var dataChange: Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +57,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.bottomNav.setOnItemSelectedListener {
+            if (dataChange) {
+                CoroutineScope(IO).launch {
+                    videoList = getAllVideos()
+                }
+            }
             when (it.itemId) {
                 R.id.videoViews -> setFragment(VideosFragment())
                 R.id.foldersView -> setFragment(FoldersFragment())
