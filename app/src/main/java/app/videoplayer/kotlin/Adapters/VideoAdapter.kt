@@ -12,9 +12,11 @@ import app.videoplayer.kotlin.Models.Video
 import app.videoplayer.kotlin.R
 import app.videoplayer.kotlin.View.Activitys.MainActivity
 import app.videoplayer.kotlin.View.Activitys.PlayerActivity
+import app.videoplayer.kotlin.databinding.VideoMoreFeaturesBinding
 import app.videoplayer.kotlin.databinding.VideoViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class VideoAdapter(
     private val context: Context,
@@ -63,6 +65,15 @@ class VideoAdapter(
                     sendIntent(position = position, ref = "AllVideos")
                 }
             }
+        }
+
+        holder.root.setOnLongClickListener {
+            val customDialog = LayoutInflater.from(context)
+                .inflate(R.layout.video_more_features, holder.root, false)
+            val bindingMF = VideoMoreFeaturesBinding.bind(customDialog)
+            val dialog = MaterialAlertDialogBuilder(context).setView(customDialog).create()
+            dialog.show()
+            return@setOnLongClickListener true
         }
     }
 

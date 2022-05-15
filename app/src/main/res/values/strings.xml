@@ -31,4 +31,9 @@
 
     <string name="search">Search</string>
 
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+    <string name="info">Info</string>
+    <string name="share">Share</string>
+
 </resources>
