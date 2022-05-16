@@ -82,6 +82,6 @@ class VideosFragment : Fragment() {
         super.onResume()
         if (PlayerActivity.position != -1) binding.nowPlayingBtn.visibility = View.VISIBLE
         if (MainActivity.dataChange) adapter.notifyDataSetChanged()
-        MainActivity.dataChange = false
+        MainActivity.adapterChange = false
     }
 }

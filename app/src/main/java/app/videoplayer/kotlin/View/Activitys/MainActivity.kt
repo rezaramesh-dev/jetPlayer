@@ -6,9 +6,12 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -20,6 +23,7 @@ import app.videoplayer.kotlin.View.Fragments.VideosFragment
 import app.videoplayer.kotlin.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
@@ -28,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val FAINAL_CODE_REQUEST: Int = 1
     lateinit var toggle: ActionBarDrawerToggle
+    private var runnable: Runnable? = null
 
     companion object {
         lateinit var videoList: ArrayList<Video>
@@ -35,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         lateinit var searchList: ArrayList<Video>
         var search: Boolean = false
         var dataChange: Boolean = false
+        var adapterChange: Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,15 +59,22 @@ class MainActivity : AppCompatActivity() {
             CoroutineScope(IO).launch {
                 videoList = getAllVideos()
                 setFragment(VideosFragment())
+
+                runnable = Runnable {
+                    if (dataChange) {
+                        CoroutineScope(IO).launch {
+                            videoList = getAllVideos()
+                            dataChange = false
+                            adapterChange = true
+                        }
+                    }
+                    Handler(Looper.getMainLooper()).postDelayed(runnable!!, 200)
+                }
+                Handler(Looper.getMainLooper()).postDelayed(runnable!!, 0)
             }
         }
 
         binding.bottomNav.setOnItemSelectedListener {
-            if (dataChange) {
-                CoroutineScope(IO).launch {
-                    videoList = getAllVideos()
-                }
-            }
             when (it.itemId) {
                 R.id.videoViews -> setFragment(VideosFragment())
                 R.id.foldersView -> setFragment(FoldersFragment())
@@ -182,6 +195,11 @@ class MainActivity : AppCompatActivity() {
         cursor?.close()
 
         return tempList
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        runnable = null
     }
 
 }

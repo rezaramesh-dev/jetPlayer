@@ -219,8 +219,21 @@ class VideoAdapter(
                                 arrayOf("video/*"),
                                 null
                             )
-                            MainActivity.videoList.removeAt(position)
-                            notifyDataSetChanged()
+                            when {
+                                MainActivity.search -> {
+                                    MainActivity.dataChange = true
+                                    videoList.removeAt(position)
+                                    notifyDataSetChanged()
+                                }
+                                isFolder -> {
+                                    MainActivity.dataChange = true
+                                    FoldersActivity.currentFolderVideo.removeAt(position)
+                                }
+                                else -> {
+                                    MainActivity.videoList.removeAt(position)
+                                    notifyDataSetChanged()
+                                }
+                            }
                         }
 
                         self.dismiss()
