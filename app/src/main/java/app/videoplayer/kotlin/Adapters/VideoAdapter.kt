@@ -1,8 +1,10 @@
 package app.videoplayer.kotlin.Adapters
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -10,21 +12,25 @@ import android.os.Environment
 import android.provider.Settings
 import android.text.SpannableStringBuilder
 import android.text.format.DateUtils
+import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.recyclerview.widget.RecyclerView
 import app.videoplayer.kotlin.Models.Video
 import app.videoplayer.kotlin.R
 import app.videoplayer.kotlin.View.Activitys.FoldersActivity
 import app.videoplayer.kotlin.View.Activitys.MainActivity
 import app.videoplayer.kotlin.View.Activitys.PlayerActivity
+import app.videoplayer.kotlin.databinding.DetailsViewBinding
 import app.videoplayer.kotlin.databinding.RenameFieldBinding
 import app.videoplayer.kotlin.databinding.VideoMoreFeaturesBinding
 import app.videoplayer.kotlin.databinding.VideoViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import java.net.URI
@@ -48,6 +54,7 @@ class VideoAdapter(
         return MyHolder(VideoViewBinding.inflate(LayoutInflater.from(context), parent, false))
     }
 
+    @SuppressLint("ResourceType")
     override fun onBindViewHolder(holder: MyHolder, position: Int) {
         holder.title.text = videoList[position].title
         holder.folder.text = videoList[position].folderName
@@ -165,6 +172,36 @@ class VideoAdapter(
                     null
                 )
             }
+
+            bindingMF.infoBtn.setOnClickListener {
+                dialog.dismiss()
+                val customDialogIF = LayoutInflater.from(context)
+                    .inflate(R.layout.details_view, holder.root, false)
+                val bindingIF = DetailsViewBinding.bind(customDialogIF)
+                val dialogIF = MaterialAlertDialogBuilder(context).setView(customDialogIF)
+                    .setCancelable(false)
+                    .setPositiveButton("OK") { self, _ ->
+
+                        self.dismiss()
+                    }
+                    .create()
+                //dialogIF.show()
+                val infoText = SpannableStringBuilder().bold { append("DETAILS\n\nName: ") }
+                    .append(videoList[position].title)
+                    .bold { append("\n\nDuration: ") }
+                    .append(DateUtils.formatElapsedTime(videoList[position].duration / 1000))
+                    .bold { append("\n\nFile Size: ") }.append(
+                        Formatter.formatShortFileSize(
+                            context,
+                            videoList[position].size.toLong()
+                        )
+                    )
+                    .bold { append("\n\nLocation") }.append(videoList[position].path)
+                bindingIF.detailTV.text = infoText
+
+                dialogIF.show()
+            }
+
             return@setOnLongClickListener true
         }
     }
