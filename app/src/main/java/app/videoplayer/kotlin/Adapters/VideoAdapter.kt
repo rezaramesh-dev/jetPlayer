@@ -33,6 +33,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
+import java.io.FileReader
 import java.net.URI
 
 class VideoAdapter(
@@ -54,7 +55,7 @@ class VideoAdapter(
         return MyHolder(VideoViewBinding.inflate(LayoutInflater.from(context), parent, false))
     }
 
-    @SuppressLint("ResourceType")
+    @SuppressLint("ResourceType", "NotifyDataSetChanged")
     override fun onBindViewHolder(holder: MyHolder, position: Int) {
         holder.title.text = videoList[position].title
         holder.folder.text = videoList[position].folderName
@@ -200,6 +201,35 @@ class VideoAdapter(
                 bindingIF.detailTV.text = infoText
 
                 dialogIF.show()
+            }
+
+            bindingMF.deleteBtn.setOnClickListener {
+                requestPermissionR()
+                dialog.dismiss()
+                val dialogRF = MaterialAlertDialogBuilder(context)
+                    .setCancelable(false)
+                    .setTitle("Delete Video?")
+                    .setMessage(videoList[position].title)
+                    .setPositiveButton("Yes") { self, _ ->
+                        val file = File(videoList[position].path)
+                        if (file.exists() && file.delete()) {
+                            MediaScannerConnection.scanFile(
+                                context,
+                                arrayOf(file.path),
+                                arrayOf("video/*"),
+                                null
+                            )
+                            MainActivity.videoList.removeAt(position)
+                            notifyDataSetChanged()
+                        }
+
+                        self.dismiss()
+                    }
+                    .setNegativeButton("No") { self, _ ->
+                        self.dismiss()
+                    }
+                    .create()
+                dialogRF.show()
             }
 
             return@setOnLongClickListener true
