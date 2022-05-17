@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,8 +20,10 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -40,7 +43,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListener {
 
     lateinit var binding: ActivityPlayerBinding
     lateinit var runnable: Runnable
@@ -48,6 +51,7 @@ class PlayerActivity : AppCompatActivity() {
     private var moreTime: Int = 0
 
     companion object {
+        private var audioManager: AudioManager? = null
         private var timer: Timer? = null
         private lateinit var player: ExoPlayer
         lateinit var playerList: ArrayList<Video>
@@ -476,10 +480,36 @@ class PlayerActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
+
+        if (!isInPictureInPictureMode) pauseVideo()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         player.pause()
+        audioManager?.abandonAudioFocus { this }
+    }
+
+    override fun onAudioFocusChange(focusChange: Int) {
+        if (focusChange <= 0) pauseVideo()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (audioManager == null) audioManager =
+            getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager!!.requestAudioFocus(
+            this,
+            AudioManager.STREAM_MUSIC,
+            AudioManager.AUDIOFOCUS_GAIN
+        )
+        playVideo()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onPause() {
+        super.onPause()
+        if (!isInPictureInPictureMode)
+            pauseVideo()
     }
 }

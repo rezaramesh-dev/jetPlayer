@@ -91,14 +91,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestRuntimePermission(): Boolean {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(WRITE_EXTERNAL_STORAGE),
+                this, arrayOf(WRITE_EXTERNAL_STORAGE),
                 FAINAL_CODE_REQUEST
             )
             return false
@@ -201,5 +198,4 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         runnable = null
     }
-
 }
