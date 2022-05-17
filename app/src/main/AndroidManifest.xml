@@ -18,11 +18,22 @@
         <activity
             android:name=".View.Activitys.PlayerActivity"
             android:configChanges="uiMode|orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
-            android:exported="false"
+            android:exported="true"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
-            tools:targetApi="n" />
+            tools:ignore="AppLinkUrlError"
+            tools:targetApi="n">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:mimeType="video/*"
+                    android:scheme="content" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".View.Activitys.FoldersActivity"
             android:exported="false"
@@ -38,7 +49,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
     </application>
 
 </manifest>

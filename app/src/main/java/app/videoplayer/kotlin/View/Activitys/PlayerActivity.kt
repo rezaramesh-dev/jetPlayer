@@ -14,7 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.style.BulletSpan
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -22,8 +22,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -37,9 +35,10 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.lang.Exception
+import java.io.File
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.Exception
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
@@ -84,29 +83,45 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
         }
 
-        initializeBinding()
+        //for handling video file intent
+        try {
 
-        initializeLayout()
-
-        binding.forwardFL.setOnClickListener(DoubleClickListener(callback = object :
-            DoubleClickListener.Callback {
-            override fun doubleClicked() {
-                binding.playerView.showController()
-                binding.forwardBtn.visibility = View.VISIBLE
-                player.seekTo(player.currentPosition + 10000)
-                moreTime = 0
+            if (intent.data?.scheme.contentEquals("content")) {
+                playerList = ArrayList()
+                position = 0
+                val cursor = contentResolver.query(
+                    intent.data!!,
+                    arrayOf(MediaStore.Video.Media.DATA),
+                    null,
+                    null,
+                    null
+                )
+                cursor?.let {
+                    it.moveToFirst()
+                    val path = it.getString(it.getColumnIndexOrThrow(MediaStore.Video.Media.DATA))
+                    val file = File(path)
+                    val video = Video(
+                        id = "",
+                        title = file.name,
+                        duration = 0L,
+                        artUri = Uri.fromFile(file),
+                        path = path,
+                        size = "",
+                        folderName = ""
+                    )
+                    playerList.add(video)
+                    cursor.close()
+                }
+                createPlayer()
+                initializeBinding()
+            } else {
+                initializeBinding()
+                initializeLayout()
             }
-        }))
 
-        binding.rewindFL.setOnClickListener(DoubleClickListener(callback = object :
-            DoubleClickListener.Callback {
-            override fun doubleClicked() {
-                binding.playerView.showController()
-                binding.rewindBtn.visibility = View.VISIBLE
-                player.seekTo(player.currentPosition - 10000)
-                moreTime = 0
-            }
-        }))
+        } catch (e: Exception) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initializeLayout() {
@@ -143,6 +158,27 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
 
     @SuppressLint("PrivateResource", "SetTextI18n")
     private fun initializeBinding() {
+
+        binding.forwardFL.setOnClickListener(DoubleClickListener(callback = object :
+            DoubleClickListener.Callback {
+            override fun doubleClicked() {
+                binding.playerView.showController()
+                binding.forwardBtn.visibility = View.VISIBLE
+                player.seekTo(player.currentPosition + 10000)
+                moreTime = 0
+            }
+        }))
+
+        binding.rewindFL.setOnClickListener(DoubleClickListener(callback = object :
+            DoubleClickListener.Callback {
+            override fun doubleClicked() {
+                binding.playerView.showController()
+                binding.rewindBtn.visibility = View.VISIBLE
+                player.seekTo(player.currentPosition - 10000)
+                moreTime = 0
+            }
+        }))
+
         val customDialog =
             LayoutInflater.from(this).inflate(R.layout.more_features, binding.root, false)
         val bindingMF = MoreFeaturesBinding.bind(customDialog)
