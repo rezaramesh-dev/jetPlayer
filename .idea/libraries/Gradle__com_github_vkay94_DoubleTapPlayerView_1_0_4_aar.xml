@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.vkay94:DoubleTapPlayerView:1.0.4@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/b03e33c60c140a8898a096988002c973/transformed/DoubleTapPlayerView-1.0.4/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b03e33c60c140a8898a096988002c973/transformed/DoubleTapPlayerView-1.0.4/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b03e33c60c140a8898a096988002c973/transformed/DoubleTapPlayerView-1.0.4/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.vkay94/DoubleTapPlayerView/1.0.4/4846ad84ac5cb051e3397408c3520571ca3f5981/DoubleTapPlayerView-1.0.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
