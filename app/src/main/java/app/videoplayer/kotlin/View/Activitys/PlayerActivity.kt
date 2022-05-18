@@ -33,6 +33,7 @@ import app.videoplayer.kotlin.Utils.DoubleClickListener
 import app.videoplayer.kotlin.databinding.ActivityPlayerBinding
 import app.videoplayer.kotlin.databinding.MoreFeaturesBinding
 import app.videoplayer.kotlin.databinding.SpeedDialogBinding
+import com.github.vkay94.dtpv.youtube.YouTubeOverlay
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
@@ -136,7 +137,6 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
     private fun initializeLayout() {
 
 
-
         when (intent.getStringExtra("class")) {
             "AllVideos" -> {
                 playerList = ArrayList()
@@ -155,7 +155,7 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
             "NowPlaying" -> {
                 speed = 1.0f
                 videoTitle.text = playerList[position].title
-                binding.playerView.player = player
+                doubleTapEnable()
                 videoTitle.isSelected = true
                 playVideo()
                 playInFullScreen(enable = isFullscreen)
@@ -170,7 +170,7 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
     @SuppressLint("PrivateResource", "SetTextI18n")
     private fun initializeBinding() {
 
-        findViewById<FrameLayout>(R.id.forwardFL).setOnClickListener(DoubleClickListener(callback = object :
+        /*findViewById<FrameLayout>(R.id.forwardFL).setOnClickListener(DoubleClickListener(callback = object :
             DoubleClickListener.Callback {
             override fun doubleClicked() {
                 binding.playerView.showController()
@@ -188,7 +188,7 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
                 player.seekTo(player.currentPosition - 10000)
                 moreTime = 0
             }
-        }))
+        }))*/
 
         val customDialog =
             LayoutInflater.from(this).inflate(R.layout.more_features, binding.root, false)
@@ -423,7 +423,7 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
         videoTitle.text = playerList[position].title
         videoTitle.isSelected = true
         player = ExoPlayer.Builder(this).setTrackSelector(trackSelector).build()
-        binding.playerView.player = player
+        doubleTapEnable()
         val mediaItem = MediaItem.fromUri(playerList[position].artUri)
         player.setMediaItem(mediaItem)
         player.prepare()
@@ -493,13 +493,13 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
         if (isLocked) findViewById<ImageButton>(R.id.lockBtn).visibility = View.VISIBLE
         else findViewById<ImageButton>(R.id.lockBtn).visibility = visibility
         if (moreTime == 2) {
-            findViewById<ImageButton>(R.id.rewindBtn).visibility = View.GONE
-            findViewById<ImageButton>(R.id.forwardBtn).visibility = View.GONE
+            //findViewById<ImageButton>(R.id.rewindBtn).visibility = View.GONE
+            //findViewById<ImageButton>(R.id.forwardBtn).visibility = View.GONE
         } else ++moreTime
 
         //for lockscreen -- hiding double tap
-        findViewById<FrameLayout>(R.id.rewindFL).visibility = visibility
-        findViewById<FrameLayout>(R.id.forwardFL).visibility = visibility
+        //findViewById<FrameLayout>(R.id.rewindFL).visibility = visibility
+        //findViewById<FrameLayout>(R.id.forwardFL).visibility = visibility
 
     }
 
@@ -558,6 +558,7 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
         super.onPause()
         if (!isInPictureInPictureMode)
             pauseVideo()
+        else playVideo()
     }
 
     private fun screenOrientation() {
@@ -566,4 +567,19 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
             else ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
     }
+
+    private fun doubleTapEnable() {
+        binding.playerView.player = player
+        binding.ytOverlay.performListener(object : YouTubeOverlay.PerformListener {
+            override fun onAnimationEnd() {
+                binding.ytOverlay.visibility = View.GONE
+            }
+
+            override fun onAnimationStart() {
+                binding.ytOverlay.visibility = View.VISIBLE
+            }
+        })
+        binding.ytOverlay.player(player)
+    }
+
 }
