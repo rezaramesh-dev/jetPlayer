@@ -37,6 +37,8 @@ import com.github.vkay94.dtpv.youtube.YouTubeOverlay
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.ui.DefaultTimeBar
+import com.google.android.exoplayer2.ui.TimeBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import java.text.DecimalFormat
@@ -159,7 +161,7 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
                 videoTitle.isSelected = true
                 playVideo()
                 playInFullScreen(enable = isFullscreen)
-                setVisibility()
+                seekBarFeature()
             }
         }
 
@@ -436,8 +438,10 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
             }
         })
         playInFullScreen(enable = isFullscreen)
-        setVisibility()
+        //setVisibility()
         nowPlayingId = playerList[position].id
+
+        seekBarFeature()
     }
 
     private fun playVideo() {
@@ -476,32 +480,32 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
         }
     }
 
-    private fun setVisibility() {
-        runnable = Runnable {
-            if (binding.playerView.isControllerVisible) changeVisibility(View.VISIBLE)
-            else changeVisibility(View.INVISIBLE)
-            Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
-        }
-        Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
-    }
+    /* private fun setVisibility() {
+         runnable = Runnable {
+             if (binding.playerView.isControllerVisible) changeVisibility(View.VISIBLE)
+             else changeVisibility(View.INVISIBLE)
+             Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
+         }
+         Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
+     }*/
 
-    private fun changeVisibility(visibility: Int) {
-        findViewById<LinearLayout>(R.id.topController).visibility = visibility
-        findViewById<LinearLayout>(R.id.bottomController).visibility = visibility
-        playPauseBtn.visibility = visibility
-        findViewById<ImageButton>(R.id.lockBtn).visibility = visibility
-        if (isLocked) findViewById<ImageButton>(R.id.lockBtn).visibility = View.VISIBLE
-        else findViewById<ImageButton>(R.id.lockBtn).visibility = visibility
-        if (moreTime == 2) {
-            //findViewById<ImageButton>(R.id.rewindBtn).visibility = View.GONE
-            //findViewById<ImageButton>(R.id.forwardBtn).visibility = View.GONE
-        } else ++moreTime
+    /* private fun changeVisibility(visibility: Int) {
+         findViewById<LinearLayout>(R.id.topController).visibility = visibility
+         findViewById<LinearLayout>(R.id.bottomController).visibility = visibility
+         playPauseBtn.visibility = visibility
+         findViewById<ImageButton>(R.id.lockBtn).visibility = visibility
+         if (isLocked) findViewById<ImageButton>(R.id.lockBtn).visibility = View.VISIBLE
+         else findViewById<ImageButton>(R.id.lockBtn).visibility = visibility
+         if (moreTime == 2) {
+             //findViewById<ImageButton>(R.id.rewindBtn).visibility = View.GONE
+             //findViewById<ImageButton>(R.id.forwardBtn).visibility = View.GONE
+         } else ++moreTime
 
-        //for lockscreen -- hiding double tap
-        //findViewById<FrameLayout>(R.id.rewindFL).visibility = visibility
-        //findViewById<FrameLayout>(R.id.forwardFL).visibility = visibility
+         //for lockscreen -- hiding double tap
+         //findViewById<FrameLayout>(R.id.rewindFL).visibility = visibility
+         //findViewById<FrameLayout>(R.id.forwardFL).visibility = visibility
 
-    }
+     }*/
 
     private fun changeSpeed(isIncrement: Boolean) {
         if (isIncrement) {
@@ -580,6 +584,24 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
             }
         })
         binding.ytOverlay.player(player)
+    }
+
+    private fun seekBarFeature() {
+        findViewById<DefaultTimeBar>(R.id.exo_progress).addListener(object :
+            TimeBar.OnScrubListener {
+            override fun onScrubStart(timeBar: TimeBar, position: Long) {
+                pauseVideo()
+            }
+
+            override fun onScrubMove(timeBar: TimeBar, position: Long) {
+                player.seekTo(position)
+            }
+
+            override fun onScrubStop(timeBar: TimeBar, position: Long, canceled: Boolean) {
+                playVideo()
+            }
+
+        })
     }
 
 }
