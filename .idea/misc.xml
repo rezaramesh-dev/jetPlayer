@@ -5,9 +5,11 @@
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.28055555555555556" />
         <entry key="app/src/main/res/drawable/ic_baseline_folder_24.xml" value="0.1595" />
+        <entry key="app/src/main/res/drawable/ic_brightness.xml" value="0.174" />
         <entry key="app/src/main/res/drawable/ic_fast_forward.xml" value="0.174" />
         <entry key="app/src/main/res/drawable/ic_fast_rewind.xml" value="0.174" />
         <entry key="app/src/main/res/drawable/ic_search.xml" value="0.174" />
+        <entry key="app/src/main/res/drawable/ic_volume.xml" value="0.174" />
         <entry key="app/src/main/res/drawable/ripple_effect.xml" value="0.174" />
         <entry key="app/src/main/res/layout/activity_folders.xml" value="0.2942708333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.30520833333333336" />

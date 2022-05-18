@@ -39,4 +39,38 @@
 
     </FrameLayout>
 
+    <Button
+        android:id="@+id/icBrightness"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#42000000"
+        android:drawableLeft="@drawable/ic_brightness"
+        android:text="0"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlHardCoded" />
+
+    <Button
+        android:id="@+id/icVolume"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#42000000"
+        android:drawableLeft="@drawable/ic_volume"
+        android:text="0"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlHardCoded" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
