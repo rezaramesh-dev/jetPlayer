@@ -1,6 +1,7 @@
 package app.videoplayer.kotlin.View.Activitys
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.AppOpsManager
 import android.app.Dialog
 import android.app.PictureInPictureParams
@@ -9,6 +10,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.AudioManager
 import android.media.Image
@@ -40,6 +42,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.google.android.exoplayer2.ui.TimeBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.common.escape.CharEscaper
 import java.io.File
 import java.lang.Math.abs
 import java.text.DecimalFormat
@@ -276,19 +279,49 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
             val tempTracks = audioTrack.toArray(arrayOfNulls<CharSequence>(audioTrack.size))
             bindingMF.audioTrack.setOnClickListener {
                 dialog.dismiss()
-                MaterialAlertDialogBuilder(this, R.style.alertDialog)
+
+                val audioTrack = ArrayList<String>()
+                val audioList = ArrayList<String>()
+
+                for (group in player.currentTracksInfo.trackGroupInfos) {
+                    if (group.trackType == C.TRACK_TYPE_AUDIO) {
+                        val groupInfo = group.trackGroup
+                        for (i in 0 until groupInfo.length) {
+                            audioTrack.add(groupInfo.getFormat(i).language.toString())
+                            audioList.add(
+                                "${audioList.size + 1}. " + Locale(groupInfo.getFormat(i).language.toString()).displayLanguage
+                                        + " (${groupInfo.getFormat(i).label})"
+                            )
+                        }
+                    }
+                }
+                if (audioList[0].contains("null")) audioList[0] = "1. Default Track"
+
+                val tempTracks = audioList.toArray(arrayOfNulls<CharSequence>(audioList.size))
+
+                val audioDialog = MaterialAlertDialogBuilder(this, R.style.alertDialog)
                     .setTitle("Select Language")
                     .setOnCancelListener { playVideo() }
-                    .setBackground(ColorDrawable(0x803700B3.toInt()))
+                    .setPositiveButton("Off Audio"){self, _ ->
+
+                        trackSelector.setParameters(trackSelector.buildUponParameters().setRendererDisabled(
+                            C.TRACK_TYPE_AUDIO, true
+                        ))
+                        self.dismiss()
+                    }
                     .setItems(tempTracks) { _, position ->
-                        Toast.makeText(this, audioTrack[position] + "Selected", Toast.LENGTH_SHORT)
+                        Toast.makeText(this, audioList[position] + "Selected", Toast.LENGTH_SHORT)
                             .show()
                         trackSelector.setParameters(
                             trackSelector.buildUponParameters()
+                                .setRendererDisabled(C.TRACK_TYPE_AUDIO, false)
                                 .setPreferredAudioLanguage(audioTrack[position])
                         )
                     }
-                    .create().show()
+                    .create()
+                audioDialog.show()
+                audioDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.WHITE)
+                audioDialog.window?.setBackgroundDrawable(ColorDrawable(0x99000000.toInt()))
             }
 
             bindingMF.subtitlesBtn.setOnClickListener {
