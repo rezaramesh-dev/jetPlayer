@@ -55,7 +55,6 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
     GestureDetector.OnGestureListener {
 
     lateinit var binding: ActivityPlayerBinding
-    lateinit var runnable: Runnable
     private var isSubtitle: Boolean = true
     private lateinit var playPauseBtn: ImageButton
     private lateinit var fullScreenBtn: ImageView
@@ -302,11 +301,13 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
                 val audioDialog = MaterialAlertDialogBuilder(this, R.style.alertDialog)
                     .setTitle("Select Language")
                     .setOnCancelListener { playVideo() }
-                    .setPositiveButton("Off Audio"){self, _ ->
+                    .setPositiveButton("Off Audio") { self, _ ->
 
-                        trackSelector.setParameters(trackSelector.buildUponParameters().setRendererDisabled(
-                            C.TRACK_TYPE_AUDIO, true
-                        ))
+                        trackSelector.setParameters(
+                            trackSelector.buildUponParameters().setRendererDisabled(
+                                C.TRACK_TYPE_AUDIO, true
+                            )
+                        )
                         self.dismiss()
                     }
                     .setItems(tempTracks) { _, position ->

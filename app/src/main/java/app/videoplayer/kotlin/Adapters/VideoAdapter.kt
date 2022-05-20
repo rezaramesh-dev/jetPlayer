@@ -94,7 +94,6 @@ class VideoAdapter(
             dialog.show()
 
             bindingMF.renameBtn.setOnClickListener {
-                requestPermissionR()
                 dialog.dismiss()
                 val customDialogRF = LayoutInflater.from(context)
                     .inflate(R.layout.rename_field, holder.root, false)
@@ -204,7 +203,6 @@ class VideoAdapter(
             }
 
             bindingMF.deleteBtn.setOnClickListener {
-                requestPermissionR()
                 dialog.dismiss()
                 val dialogRF = MaterialAlertDialogBuilder(context)
                     .setCancelable(false)
@@ -267,7 +265,7 @@ class VideoAdapter(
         notifyDataSetChanged()
     }
 
-    private fun requestPermissionR() {
+   /* private fun requestPermissionR() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
@@ -276,5 +274,5 @@ class VideoAdapter(
                 ContextCompat.startActivity(context, intent, null)
             }
         }
-    }
+    }*/
 }
