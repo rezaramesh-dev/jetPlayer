@@ -156,6 +156,7 @@ class PlayerActivity : AppCompatActivity(), AudioManager.OnAudioFocusChangeListe
             "FolderActivity" -> {
                 playerList = ArrayList()
                 playerList.addAll(FoldersActivity.currentFolderVideo)
+                createPlayer()
             }
             "SearchedVideos" -> {
                 playerList = ArrayList()
