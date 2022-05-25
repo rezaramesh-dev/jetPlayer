@@ -4,15 +4,16 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import app.videoplayer.kotlin.Models.Folder
@@ -26,14 +27,12 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.launch
 import java.io.File
-import java.lang.Exception
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding
     private val FAINAL_CODE_REQUEST: Int = 1
     lateinit var toggle: ActionBarDrawerToggle
     private var runnable: Runnable? = null
-
     companion object {
         lateinit var videoList: ArrayList<Video>
         lateinit var folderList: ArrayList<Folder>
@@ -43,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         var adapterChange: Boolean = false
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
